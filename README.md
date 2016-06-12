@@ -7,6 +7,8 @@ TODO:
 
 - [x] Play URI
 
-- [ ] Volume control
+- [x] Volume control
 
-- [ ] ...More
+- [ ] ...More function
+
+- [x] background.mp3
