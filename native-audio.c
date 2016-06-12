@@ -20,6 +20,7 @@
    src/com/example/nativeaudio/NativeAudio/NativeAudio.java */
 
 // #include <assert.h>
+#include <ctype.h>
 #include <string.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -131,6 +132,12 @@ void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 	// 
 	// 
 	// 
+	// 
+	// 
+	// 
+	// 
+	// 
+	// 
 	// next buffer
 	if (--nextCount > 0 && NULL != nextBuffer && 0 != nextSize)
 	{
@@ -164,9 +171,9 @@ void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 
 void uriPlayerCallback(SLPlayItf caller, void *pContext, SLuint32 playevent)
 {
-		if (playevent == SL_PLAYEVENT_HEADATEND)
+	if (playevent == SL_PLAYEVENT_HEADATEND)
 	{
-finished=true;
+		finished = true;
 	}
 }
 
@@ -365,7 +372,7 @@ bool createUriAudioPlayer(const char *uri)
 	result = (*uriPlayerObject)->GetInterface(uriPlayerObject, SL_IID_VOLUME, &uriPlayerVolume);
 	assert(SL_RESULT_SUCCESS == result);
 	(void)result;
-	(*uriPlayerPlay)->RegisterCallback(uriPlayerPlay,uriPlayerCallback,NULL);
+	(*uriPlayerPlay)->RegisterCallback(uriPlayerPlay, uriPlayerCallback, NULL);
 	(*uriPlayerPlay)->SetCallbackEventsMask(uriPlayerPlay, SL_PLAYEVENT_HEADATEND);
 
 	return true;
@@ -801,6 +808,12 @@ void shutdown()
 	// 
 	// 
 	// 
+	// 
+	// 
+	// 
+	// 
+	// 
+	// 
 	// interfaces
 	if (bqPlayerObject != NULL)
 	{
@@ -864,21 +877,35 @@ void shutdown()
 
 }
 
+int max(int a, int b)
+{
+	return a > b ? a : b;
+}
+
+int min(int a, int b)
+{
+	return a < b ? a : b;
+}
+
+
+// uriPlayer test
 int main(int argc, char **argv)
 {
-	onDlOpen();
 	createEngine();
-//	 createBufferQueueAudioPlayer(); selectClip(3,5); 
 	if (argc >= 2)
 		createUriAudioPlayer(argv[1]);
-	else createUriAudioPlayer("background.mp3");
+	else
+		createUriAudioPlayer("background.mp3");
 	setPlayingUriAudioPlayer(true);
+
+	int vol = 0;
 	bool playing = true;
 	while (!finished)
 	{
-		char ch = getch();
-		printf("\x1B[2J\x1B[0;0f");
-		switch (ch)
+		// char cmd = tolower(getch());
+		// printf("\x1B[2J\x1B[0;0f");
+		// switch (cmd)
+		switch (tolower(getch()))
 		{
 
 		case 'p':
@@ -890,6 +917,25 @@ int main(int argc, char **argv)
 			// default:
 			finished = true;
 			break;
+		case '+':
+			vol++;
+			vol = min(vol, 0);
+			if (SL_RESULT_SUCCESS ==
+				(*uriPlayerVolume)->SetVolumeLevel(uriPlayerVolume, vol * 500))
+			{
+				printf("SetVolumeLevel(%d)\n", vol * 500);
+			}
+			break;
+		case '-':
+			vol--;
+			vol = max(vol, -10);
+			if (SL_RESULT_SUCCESS ==
+				(*uriPlayerVolume)->SetVolumeLevel(uriPlayerVolume, vol * 500))
+			{
+				printf("SetVolumeLevel(%d)\n", vol * 500);
+			}
+			break;
+
 		}
 	}
 	shutdown();
