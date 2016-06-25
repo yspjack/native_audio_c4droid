@@ -128,16 +128,7 @@ void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 	assert(bq == bqPlayerBufferQueue);
 	assert(NULL == context);
 	puts("bqPlayerCallback");
-	// for streaming playback, replace this test by logic to find and fill the 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
+	// for streaming playback, replace this test by logic to find and fill
 	// next buffer
 	if (--nextCount > 0 && NULL != nextBuffer && 0 != nextSize)
 	{
@@ -805,6 +796,9 @@ void shutdown()
 {
 
 	// destroy buffer queue audio player object, and invalidate all associated 
+	// 
+	// 
+	// 
 	// 
 	// 
 	// 
